@@ -32,7 +32,7 @@ Considera di:
 
 ```bash
 git add .
-git commit -m "Descrizione delle modifiche"
+git commit -m "Descrizione delle modifiche fatte"
 git push
 ```
 
