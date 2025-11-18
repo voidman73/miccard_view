@@ -111,7 +111,8 @@ function paginateArray($data, $page, $perPage) {
     ];
 }
 
-// Pagina i risultati
+// Per DataTables carichiamo tutti i dati (non paginati lato server)
+// Manteniamo la funzione per compatibilità ma non la usiamo per la visualizzazione
 $paged1 = paginateArray($query1Data, $page1, RECORDS_PER_PAGE);
 $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
 ?>
@@ -123,6 +124,9 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
     <title>Query Database Store MiCCard- Email Export</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 </head>
 <body>
     <div class="container">
@@ -173,11 +177,10 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                     </form>
                 </div>
                 <div class="pagination-info">
-                    <span class="badge"><?php echo $paged1['total']; ?> risultati</span>
-                    <span>Mostrando <?php echo $paged1['offset'] + 1; ?> - <?php echo min($paged1['offset'] + RECORDS_PER_PAGE, $paged1['total']); ?> di <?php echo $paged1['total']; ?></span>
+                    <span class="badge"><?php echo count($query1Data); ?> risultati totali</span>
                 </div>
                 <div class="table-container">
-                    <table class="data-table">
+                    <table id="table1" class="data-table table table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -185,10 +188,10 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (count($paged1['data']) > 0): ?>
-                                <?php foreach ($paged1['data'] as $index => $email): ?>
+                            <?php if (count($query1Data) > 0): ?>
+                                <?php foreach ($query1Data as $index => $email): ?>
                                 <tr>
-                                    <td><?php echo $paged1['offset'] + $index + 1; ?></td>
+                                    <td><?php echo $index + 1; ?></td>
                                     <td><?php echo htmlspecialchars($email); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -200,45 +203,6 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                         </tbody>
                     </table>
                 </div>
-                <?php if ($paged1['pages'] > 1): ?>
-                <div class="pagination">
-                    <?php if ($page1 > 1): ?>
-                        <a href="?page1=<?php echo $page1 - 1; ?>&page2=<?php echo $page2; ?>" class="btn btn-pagination">« Precedente</a>
-                    <?php else: ?>
-                        <span class="btn btn-pagination disabled">« Precedente</span>
-                    <?php endif; ?>
-                    
-                    <span class="pagination-numbers">
-                        <?php
-                        $startPage = max(1, $page1 - 2);
-                        $endPage = min($paged1['pages'], $page1 + 2);
-                        
-                        if ($startPage > 1): ?>
-                            <a href="?page1=1&page2=<?php echo $page2; ?>" class="btn btn-pagination">1</a>
-                            <?php if ($startPage > 2): ?><span class="pagination-dots">...</span><?php endif; ?>
-                        <?php endif; ?>
-                        
-                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                            <?php if ($i == $page1): ?>
-                                <span class="btn btn-pagination active"><?php echo $i; ?></span>
-                            <?php else: ?>
-                                <a href="?page1=<?php echo $i; ?>&page2=<?php echo $page2; ?>" class="btn btn-pagination"><?php echo $i; ?></a>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-                        
-                        <?php if ($endPage < $paged1['pages']): ?>
-                            <?php if ($endPage < $paged1['pages'] - 1): ?><span class="pagination-dots">...</span><?php endif; ?>
-                            <a href="?page1=<?php echo $paged1['pages']; ?>&page2=<?php echo $page2; ?>" class="btn btn-pagination"><?php echo $paged1['pages']; ?></a>
-                        <?php endif; ?>
-                    </span>
-                    
-                    <?php if ($page1 < $paged1['pages']): ?>
-                        <a href="?page1=<?php echo $page1 + 1; ?>&page2=<?php echo $page2; ?>" class="btn btn-pagination">Successiva »</a>
-                    <?php else: ?>
-                        <span class="btn btn-pagination disabled">Successiva »</span>
-                    <?php endif; ?>
-                </div>
-                <?php endif; ?>
             </div>
             <?php endif; ?>
 
@@ -255,11 +219,10 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                     </form>
                 </div>
                 <div class="pagination-info">
-                    <span class="badge"><?php echo $paged2['total']; ?> risultati</span>
-                    <span>Mostrando <?php echo $paged2['offset'] + 1; ?> - <?php echo min($paged2['offset'] + RECORDS_PER_PAGE, $paged2['total']); ?> di <?php echo $paged2['total']; ?></span>
+                    <span class="badge"><?php echo count($query2Data); ?> risultati totali</span>
                 </div>
                 <div class="table-container">
-                    <table class="data-table">
+                    <table id="table2" class="data-table table table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -267,10 +230,10 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (count($paged2['data']) > 0): ?>
-                                <?php foreach ($paged2['data'] as $index => $email): ?>
+                            <?php if (count($query2Data) > 0): ?>
+                                <?php foreach ($query2Data as $index => $email): ?>
                                 <tr>
-                                    <td><?php echo $paged2['offset'] + $index + 1; ?></td>
+                                    <td><?php echo $index + 1; ?></td>
                                     <td><?php echo htmlspecialchars($email); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -282,45 +245,6 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
                         </tbody>
                     </table>
                 </div>
-                <?php if ($paged2['pages'] > 1): ?>
-                <div class="pagination">
-                    <?php if ($page2 > 1): ?>
-                        <a href="?page1=<?php echo $page1; ?>&page2=<?php echo $page2 - 1; ?>" class="btn btn-pagination">« Precedente</a>
-                    <?php else: ?>
-                        <span class="btn btn-pagination disabled">« Precedente</span>
-                    <?php endif; ?>
-                    
-                    <span class="pagination-numbers">
-                        <?php
-                        $startPage = max(1, $page2 - 2);
-                        $endPage = min($paged2['pages'], $page2 + 2);
-                        
-                        if ($startPage > 1): ?>
-                            <a href="?page1=<?php echo $page1; ?>&page2=1" class="btn btn-pagination">1</a>
-                            <?php if ($startPage > 2): ?><span class="pagination-dots">...</span><?php endif; ?>
-                        <?php endif; ?>
-                        
-                        <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                            <?php if ($i == $page2): ?>
-                                <span class="btn btn-pagination active"><?php echo $i; ?></span>
-                            <?php else: ?>
-                                <a href="?page1=<?php echo $page1; ?>&page2=<?php echo $i; ?>" class="btn btn-pagination"><?php echo $i; ?></a>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-                        
-                        <?php if ($endPage < $paged2['pages']): ?>
-                            <?php if ($endPage < $paged2['pages'] - 1): ?><span class="pagination-dots">...</span><?php endif; ?>
-                            <a href="?page1=<?php echo $page1; ?>&page2=<?php echo $paged2['pages']; ?>" class="btn btn-pagination"><?php echo $paged2['pages']; ?></a>
-                        <?php endif; ?>
-                    </span>
-                    
-                    <?php if ($page2 < $paged2['pages']): ?>
-                        <a href="?page1=<?php echo $page1; ?>&page2=<?php echo $page2 + 1; ?>" class="btn btn-pagination">Successiva »</a>
-                    <?php else: ?>
-                        <span class="btn btn-pagination disabled">Successiva »</span>
-                    <?php endif; ?>
-                </div>
-                <?php endif; ?>
             </div>
             <?php endif; ?>
         </div>
@@ -329,6 +253,12 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script>
         // Inizializza date picker
         flatpickr("#date_from", {
@@ -344,6 +274,45 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
             maxDate: new Date(),
             defaultDate: "<?php echo htmlspecialchars($dateTo); ?>"
         });
+
+        // Inizializza DataTables
+        <?php if (!empty($query1Data) && !isset($query1Data['error']) && count($query1Data) > 0): ?>
+        $(document).ready(function() {
+            $('#table1').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/it-IT.json'
+                },
+                pageLength: 50,
+                lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tutti"]],
+                order: [[0, 'asc']],
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    { orderable: true, targets: [0, 1] },
+                    { searchable: true, targets: [1] }
+                ]
+            });
+        });
+        <?php endif; ?>
+
+        <?php if (!empty($query2Data) && !isset($query2Data['error']) && count($query2Data) > 0): ?>
+        $(document).ready(function() {
+            $('#table2').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/it-IT.json'
+                },
+                pageLength: 50,
+                lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tutti"]],
+                order: [[0, 'asc']],
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                columnDefs: [
+                    { orderable: true, targets: [0, 1] },
+                    { searchable: true, targets: [1] }
+                ]
+            });
+        });
+        <?php endif; ?>
     </script>
 </body>
 </html>

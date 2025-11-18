@@ -6,8 +6,8 @@
 
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'store');
-define('DB_USER', 'XXXX');
-define('DB_PASS', 'XXXX');
+define('DB_USER', 'read');
+define('DB_PASS', 'msmild');
 define('DB_CHARSET', 'utf8mb4');
 
 /**

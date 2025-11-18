@@ -216,12 +216,12 @@ header h1 {
 
 .table-container {
     overflow-x: auto;
-    overflow-y: auto;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    max-height: 600px;
     flex: 1;
     min-height: 0;
+    padding: 10px;
+    background: var(--surface);
 }
 
 .data-table {
@@ -408,5 +408,85 @@ header h1 {
 .pagination-dots {
     padding: 0 4px;
     color: var(--text-secondary);
+}
+
+/* Stili per DataTables */
+.dataTables_wrapper {
+    width: 100%;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: var(--surface);
+    color: var(--text-primary);
+    margin: 0 10px;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 8px 12px;
+    margin: 0 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-primary) !important;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--primary-light) !important;
+    color: white !important;
+    border-color: var(--primary-color);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: var(--text-secondary);
+    padding-top: 10px;
+}
+
+/* Override Bootstrap table styles per DataTables */
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: var(--surface);
+}
+
+.table-striped > tbody > tr:nth-of-type(even) > td {
+    background-color: var(--surface-light);
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(30, 144, 255, 0.1) !important;
 }
 
