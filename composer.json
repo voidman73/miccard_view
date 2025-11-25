@@ -4,7 +4,8 @@
     "type": "project",
     "require": {
         "php": ">=8.0",
-        "phpoffice/phpspreadsheet": "^1.29"
+        "phpoffice/phpspreadsheet": "^1.29",
+        "adldap2/adldap2": "^10.5"
     },
     "autoload": {
         "psr-4": {
@@ -12,4 +13,3 @@
         }
     }
 }
-

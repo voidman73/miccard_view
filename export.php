@@ -1,16 +1,3 @@
-<?php
-/**
- * Gestione export Excel
- */
-
-require_once 'config.php';
-require_once 'vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-
-/**
- * Esporta dati in formato Excel
  * @param array $data Array di email
  * @param string $filename Nome del file
  */
