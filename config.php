@@ -11,6 +11,19 @@ define('DB_PASS', 'msmild');
 define('DB_CHARSET', 'utf8mb4');
 
 /**
+ * Configurazione Active Directory
+ */
+define('AD_HOST', '192.168.0.10'); // IP o Hostname del Domain Controller
+define('AD_BASE_DN', 'dc=zetema,dc=it');
+define('AD_ACCOUNT_SUFFIX', '@zetema.it');
+define('AD_USE_SSL', false);
+define('AD_USE_TLS', false);
+define('AD_PORT', 389);
+// Opzionale: Utente di servizio per il binding (se anonimo non permesso)
+define('AD_ADMIN_USERNAME', 'generalservice@zetema.it'); 
+define('AD_ADMIN_PASSWORD', 'Zetema@123$');
+
+/**
  * Connessione al database MySQL
  * @return mysqli|null
  */

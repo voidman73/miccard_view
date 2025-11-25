@@ -6,6 +6,26 @@
 
 session_start();
 require_once 'config.php';
+require_once 'src/Auth.php';
+
+use App\Auth;
+
+$auth = new Auth();
+
+// Logout handler
+if (isset($_GET['logout'])) {
+    $auth->logout();
+    header('Location: login.php');
+    exit;
+}
+
+// Check authentication
+if (!$auth->check()) {
+    header('Location: login.php');
+    exit;
+}
+
+// Costanti paginazione
 
 // Costanti paginazione
 define('RECORDS_PER_PAGE', 50);
@@ -133,6 +153,10 @@ $paged2 = paginateArray($query2Data, $page2, RECORDS_PER_PAGE);
         <header>
             <h1>Query Database Store</h1>
             <p class="subtitle">Interrogazione email clienti con consenso newsletter</p>
+            <div style="text-align: right; margin-top: -30px;">
+                <span style="margin-right: 10px;">Utente: <strong><?php echo htmlspecialchars($auth->user()); ?></strong></span>
+                <a href="?logout=1" class="btn btn-reset" style="text-decoration: none; font-size: 0.9rem; padding: 5px 10px;">Esci</a>
+            </div>
         </header>
 
         <div class="card">
