@@ -30,6 +30,54 @@ composer install
 
 3. Assicurati che il server web abbia accesso al database MySQL.
 
+## Aggiornamento su Altro Server
+
+### Primo Setup (Clone del Repository)
+
+Se è la prima volta che installi su un nuovo server:
+
+```bash
+# Clona il repository
+git clone https://github.com/voidman73/miccard_view.git
+
+# Entra nella directory
+cd miccard_view
+
+# Installa le dipendenze
+composer install
+
+# Configura il file config.php con le credenziali del database del nuovo server
+# (modifica DB_HOST, DB_NAME, DB_USER, DB_PASS se necessario)
+```
+
+### Aggiornamento File Esistenti (Pull)
+
+Se il repository esiste già sul server e vuoi aggiornarlo con le ultime modifiche:
+
+```bash
+# Entra nella directory del progetto
+cd /percorso/del/progetto/miccard_view
+
+# Scarica le ultime modifiche da GitHub
+git pull origin main
+
+# Aggiorna le dipendenze (se ci sono nuove librerie)
+composer install
+```
+
+### Comandi Rapidi
+
+```bash
+# Verifica lo stato del repository
+git status
+
+# Vedi le ultime modifiche
+git log --oneline -5
+
+# Aggiorna tutto in un comando
+git pull && composer install
+```
+
 ## Utilizzo
 
 1. Apri `index.php` nel browser
