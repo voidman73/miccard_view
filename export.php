@@ -1,3 +1,16 @@
+<?php
+/**
+ * Export Email to Excel
+ */
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+
+/**
+ * Esporta array di email in file Excel
  * @param array $data Array di email
  * @param string $filename Nome del file
  */
