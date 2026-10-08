@@ -27,7 +27,7 @@ Applicazione web interna in PHP 8.x per estrarre dal database MySQL `store` le e
 composer install
 ```
 
-2. Configura `config.php`:
+2. Crea `config.php` copiando `config-sample.php` (`config.php` non è versionato) e configuralo:
    - database: `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` (utente con soli permessi di lettura)
    - Active Directory: `AD_HOST`, `AD_BASE_DN`, `AD_ACCOUNT_SUFFIX`, `AD_ADMIN_USERNAME`, `AD_ADMIN_PASSWORD`
 
@@ -41,7 +41,7 @@ composer install
 | `index.php` | Pagina principale: periodo, filtro consenso, tabella, download |
 | `data.php` | Endpoint JSON che fornisce la tabella pagina per pagina |
 | `export.php` | Genera il file Excel con lo stesso filtro della tabella |
-| `config.php` | Credenziali e funzioni di accesso al database |
+| `config-sample.php` | Modello di `config.php` (credenziali e funzioni di accesso al database); `config.php` non è versionato |
 | `src/Auth.php` | Autenticazione Active Directory e sessione |
 | `src/output.php` | Invia ogni risposta PHP con `Content-Length` (vedi "Risoluzione problemi") |
 | `app.css` | Unico foglio di stile (colori, spaziature, tema scuro) |
@@ -59,7 +59,8 @@ cd miccard_view
 # Installa le dipendenze
 composer install
 
-# Configura config.php con le credenziali del nuovo server
+# Crea config.php dal modello e inserisci le credenziali del nuovo server
+cp config-sample.php config.php
 ```
 
 ### Aggiornamento (Pull)
