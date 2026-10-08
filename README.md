@@ -109,4 +109,3 @@ Il formato .xls supporta al massimo 65.535 righe: restringere il periodo o usare
 
 ## Note
 
-⚠️ **IMPORTANTE**: `config.php` contiene le credenziali del database e dell'account di servizio Active Directory. Non committarlo con le credenziali reali in repository pubblici.
