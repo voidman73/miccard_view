@@ -1,0 +1,176 @@
+/* MiCCard email export: app stylesheet. Loads after the DataTables default CSS. */
+
+/* 1. Tokens */
+:root {
+  color-scheme: light dark;
+  --bg: #F5F7FA;
+  --surface: #FFFFFF;
+  --text: #1A1D21;
+  --muted: #5B6470;
+  --primary: #0B5FB8;
+  --primary-hover: #094E98;
+  --primary-soft: #EAF2FB;
+  --on-primary: #FFFFFF;
+  --border: #8A939E;
+  --border-subtle: #E3E7EC;
+  --error-text: #A61B1B;
+  --error-bg: #FDECEC;
+  --success-text: #1D6B34;
+  --success-bg: #E8F5EC;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  --t-sm: 0.8125rem; --t-base: 0.9375rem; --t-md: 1.0625rem; --t-lg: 1.375rem;
+  --w-regular: 400; --w-bold: 600;
+  --radius: 6px;
+  --font: system-ui, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16191D;
+    --surface: #1F2329;
+    --text: #E6E9ED;
+    --muted: #A3ACB7;
+    --primary: #6CB4FF;
+    --on-primary: #0B1B2E;
+    --border: #6B7480;
+    --error-text: #FFB4B4;
+    --error-bg: #3A1E1E;
+    --success-text: #9BE0AE;
+    --success-bg: #183A24;
+    --primary-hover: #9CCBFF;
+    --primary-soft: #1E3247;
+    --border-subtle: #2C3138;
+  }
+}
+
+/* 2. Reset and base */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: var(--w-regular) var(--t-base)/1.5 var(--font); }
+input, button, select { font: inherit; color: inherit; }
+h1, h2 { margin: 0 0 var(--s4); font-weight: var(--w-bold); line-height: 1.3; }
+h1 { font-size: var(--t-lg); }
+h2 { font-size: var(--t-md); }
+p { margin: 0 0 var(--s4); }
+a { color: var(--primary); }
+
+/* 3. Focus */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* 4. Layout */
+.app-bar {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--s5); background: var(--surface); border-bottom: 1px solid var(--border-subtle);
+}
+.app-title { margin: 0; font-size: var(--t-md); font-weight: var(--w-bold); }
+.page { max-width: 960px; margin: 0 auto; padding: var(--s5); }
+.page--narrow { max-width: 400px; }
+.panel {
+  background: var(--surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
+  padding: var(--s5); margin-bottom: var(--s5);
+}
+.form-row { display: flex; flex-wrap: wrap; gap: var(--s4); align-items: flex-end; }
+.results-head {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
+  gap: var(--s4); margin-bottom: var(--s5);
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* 5. Components */
+.field { display: flex; flex-direction: column; gap: var(--s1); margin-bottom: var(--s4); }
+.form-row .field { margin-bottom: 0; }
+.field label { font-weight: var(--w-bold); }
+.field input {
+  padding: var(--s2) var(--s3); background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.hint { color: var(--muted); font-size: var(--t-sm); }
+.form-row + .hint { margin: var(--s3) 0 0; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  padding: var(--s2) var(--s4); border: 1px solid transparent; border-radius: var(--radius);
+  font-weight: var(--w-bold); line-height: 1.5; cursor: pointer; text-decoration: none;
+}
+.btn-primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover:not(:disabled) { background: var(--primary-soft); }
+.btn:disabled, .btn[aria-busy="true"] { opacity: .6; cursor: progress; }
+
+.alert { padding: var(--s3) var(--s4); border: 1px solid currentColor; border-radius: var(--radius); margin-bottom: var(--s5); }
+.alert:empty { display: none; }
+.alert-error { color: var(--error-text); background: var(--error-bg); }
+.alert-success { color: var(--success-text); background: var(--success-bg); }
+
+.empty-state { color: var(--muted); text-align: center; padding: var(--s6); }
+
+.choice { border: 0; margin: 0; padding: 0; min-width: 0; }
+.choice legend { padding: 0; margin-bottom: var(--s2); font-weight: var(--w-bold); }
+.choice label { display: flex; align-items: center; gap: var(--s2); padding: var(--s1) 0; cursor: pointer; }
+.choice input { margin: 0; accent-color: var(--primary); }
+.choice .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* 6. DataTables overrides (default styling, 1.13.7) */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter { margin-bottom: var(--s4); }
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate { margin-top: var(--s4); color: var(--muted); }
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  padding: var(--s1) var(--s2); background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.dataTables_wrapper .dataTables_filter input { margin-left: var(--s2); }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button:active {
+  --pg-fg: var(--text);
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius);
+  box-shadow: none; /* neutralise DataTables :active inset shading */
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.disabled):hover {
+  background: var(--primary-soft); border-color: var(--border);
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  --pg-fg: var(--on-primary);
+  background: var(--primary); border-color: var(--primary);
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled { --pg-fg: var(--muted); }
+/* DataTables forces page-button color (inherit / white / grey) as important on every state.
+   This one important rule reads a per-state custom property; the tripled class outranks .disabled:hover. */
+.dataTables_wrapper .dataTables_paginate .paginate_button.paginate_button.paginate_button { color: var(--pg-fg) !important; }
+
+.dataTables_wrapper .dataTables_processing {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius);
+}
+div.dataTables_processing > div:last-child > div { background: var(--primary); }
+
+table.dataTable thead th { color: var(--text); background: transparent; font-weight: var(--w-bold); text-align: left; }
+table.dataTable > thead > tr > th { border-bottom: 1px solid var(--border); }
+table.dataTable.no-footer { border-bottom: 1px solid var(--border-subtle); }
+table.dataTable tbody tr { background: transparent; }
+table.dataTable tbody tr:hover { background: var(--primary-soft); }
+table.dataTable > tbody > tr > td { border-top: 1px solid var(--border-subtle); }
+table.dataTable td.dataTables_empty { color: var(--muted); padding: var(--s6); }
+
+/* 7. Motion: colour only, 150ms max */
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .dataTables_wrapper .dataTables_paginate .paginate_button, table.dataTable tbody tr {
+    transition: background-color 150ms, border-color 150ms, color 150ms;
+  }
+}
+
+/* 8. Responsive */
+@media (max-width: 640px) {
+  .app-bar { padding: var(--s3) var(--s4); }
+  .page { padding: var(--s4); }
+  .panel { padding: var(--s4); }
+  .form-row { flex-direction: column; align-items: stretch; }
+  .form-row .btn { width: 100%; }
+  .results-head { flex-direction: column; align-items: stretch; }
+}

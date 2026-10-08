@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/src/output.php';
 session_start();
 require_once 'src/Auth.php';
 
@@ -30,102 +31,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Query Database Store</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f5f7fa;
-            margin: 0;
-        }
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .login-header h1 {
-            font-size: 1.5rem;
-            color: #2c3e50;
-            margin: 0;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #4a5568;
-            font-weight: 500;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box; /* Importante per padding */
-        }
-        .btn-login {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .btn-login:hover {
-            background-color: #2980b9;
-        }
-        .alert-error {
-            background-color: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 0.75rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-    </style>
+    <title>Accesso · Esportazione email MiC Card</title>
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>Accesso Richiesto</h1>
-            <p style="color: #718096; margin-top: 0.5rem;">Utilizza le tue credenziali di dominio</p>
-        </div>
-        
+    <main class="page page--narrow">
+        <h1>Esportazione email MiC Card</h1>
+        <p class="hint">Accedi con le credenziali che usi per il PC aziendale.</p>
+
         <?php if ($error): ?>
-            <div class="alert alert-error">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
+            <div class="alert alert-error" role="alert"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" required autofocus placeholder="es. mario.rossi">
+        <form method="POST" action="" id="login-form">
+            <div class="field">
+                <label for="username">Nome utente</label>
+                <input type="text" id="username" name="username" autocomplete="username" required autofocus>
             </div>
-            
-            <div class="form-group">
+
+            <div class="field">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••">
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
             </div>
-            
-            <button type="submit" class="btn-login">Accedi</button>
+
+            <button type="submit" class="btn btn-primary">Accedi</button>
         </form>
-    </div>
+    </main>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function () {
+            var b = this.querySelector('button[type="submit"]');
+            b.disabled = true; b.setAttribute('aria-busy', 'true'); b.textContent = 'Accesso in corso…';
+        });
+    </script>
 </body>
 </html>

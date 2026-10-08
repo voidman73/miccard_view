@@ -25,6 +25,12 @@ define('AD_ADMIN_PASSWORD', 'xxxxx');
 
 
 /**
+ * Messaggio generico mostrato all'utente in caso di errore query
+ * (il dettaglio tecnico va solo nel log)
+ */
+define('DB_ERROR_MESSAGE', 'Impossibile caricare i dati. Riprovare o contattare l\'assistenza.');
+
+/**
  * Connessione al database MySQL
  * @return mysqli|null
  */
@@ -55,64 +61,111 @@ function getDbConnection() {
 }
 
 /**
- * Esegue query 1: email con newsletter_consent=1
- * @param string $dateFrom
- * @param string $dateTo
- * @return array
+ * Costruisce la clausola WHERE comune alle query email
+ * Date in formato Y-m-d, entrambe incluse
+ * @param string $queryType '1' = newsletter, '2' = newsletter + cultural
+ * @return array [sql, types, params]
  */
-function executeQuery1($dateFrom, $dateTo) {
+function buildEmailWhere($queryType, $dateFrom, $dateTo, $search = '') {
+    $sql = "creation_date >= ? AND creation_date < DATE_ADD(?, INTERVAL 1 DAY) AND newsletter_consent=1";
+    if ($queryType === '2') {
+        $sql .= " AND cultural_consent=1";
+    }
+    $types = "ss";
+    $params = [$dateFrom, $dateTo];
+
+    if ($search !== '') {
+        $sql .= " AND email LIKE ?";
+        $types .= "s";
+        $params[] = '%' . addcslashes($search, '%_\\') . '%';
+    }
+
+    return [$sql, $types, $params];
+}
+
+/**
+ * Conta le email per tipo query
+ * @return int|array Numero di record o ['error' => ...]
+ */
+function countEmails($queryType, $dateFrom, $dateTo, $search = '') {
     $conn = getDbConnection();
     if (!$conn) {
-        return ['error' => 'Errore di connessione al database'];
+        return ['error' => DB_ERROR_MESSAGE];
     }
-    
-    $stmt = $conn->prepare("SELECT LCASE(email) as email FROM `store`.`cliente` WHERE creation_date >= ? AND creation_date <= ? AND newsletter_consent=1 ORDER BY email;");
-    
-    if (!$stmt) {
-        return ['error' => 'Errore nella preparazione della query: ' . $conn->error];
+
+    [$where, $types, $params] = buildEmailWhere($queryType, $dateFrom, $dateTo, $search);
+    try {
+        $stmt = $conn->prepare("SELECT COUNT(*) AS n FROM `store`.`cliente` WHERE $where");
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $count = (int)$stmt->get_result()->fetch_assoc()['n'];
+        $stmt->close();
+    } catch (mysqli_sql_exception $e) {
+        error_log($e->getMessage());
+        return ['error' => DB_ERROR_MESSAGE];
     }
-    
-    $stmt->bind_param("ss", $dateFrom, $dateTo);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $emails = [];
-    while ($row = $result->fetch_assoc()) {
-        $emails[] = $row['email'];
+    return $count;
+}
+
+/**
+ * Restituisce una pagina di email per tipo query
+ * @return array Lista email o ['error' => ...]
+ */
+function fetchEmailPage($queryType, $dateFrom, $dateTo, $search, $offset, $limit, $orderDir = 'ASC') {
+    $conn = getDbConnection();
+    if (!$conn) {
+        return ['error' => DB_ERROR_MESSAGE];
     }
-    
-    $stmt->close();
+
+    $orderDir = strtoupper($orderDir) === 'DESC' ? 'DESC' : 'ASC';
+    [$where, $types, $params] = buildEmailWhere($queryType, $dateFrom, $dateTo, $search);
+    $types .= "ii";
+    $params[] = $limit;
+    $params[] = $offset;
+
+    try {
+        $stmt = $conn->prepare("SELECT LCASE(email) AS email FROM `store`.`cliente` WHERE $where ORDER BY email $orderDir LIMIT ? OFFSET ?");
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $emails = [];
+        while ($row = $result->fetch_assoc()) {
+            $emails[] = $row['email'];
+        }
+        $stmt->close();
+    } catch (mysqli_sql_exception $e) {
+        error_log($e->getMessage());
+        return ['error' => DB_ERROR_MESSAGE];
+    }
     return $emails;
 }
 
 /**
- * Esegue query 2: email con newsletter_consent=1 AND cultural_consent=1
- * @param string $dateFrom
- * @param string $dateTo
- * @return array
+ * Restituisce tutte le email per tipo query (per l'export), ordinate A-Z
+ * @return array Lista email o ['error' => ...]
  */
-function executeQuery2($dateFrom, $dateTo) {
+function fetchAllEmails($queryType, $dateFrom, $dateTo, $search = '') {
     $conn = getDbConnection();
     if (!$conn) {
-        return ['error' => 'Errore di connessione al database'];
+        return ['error' => DB_ERROR_MESSAGE];
     }
-    
-    $stmt = $conn->prepare("SELECT LCASE(email) as email FROM `store`.`cliente` WHERE creation_date >= ? AND creation_date <= ? AND newsletter_consent=1 AND cultural_consent=1 ORDER BY email;");
-    
-    if (!$stmt) {
-        return ['error' => 'Errore nella preparazione della query: ' . $conn->error];
+
+    [$where, $types, $params] = buildEmailWhere($queryType, $dateFrom, $dateTo, $search);
+    try {
+        $stmt = $conn->prepare("SELECT LCASE(email) AS email FROM `store`.`cliente` WHERE $where ORDER BY email ASC");
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $emails = [];
+        while ($row = $result->fetch_assoc()) {
+            $emails[] = $row['email'];
+        }
+        $stmt->close();
+    } catch (mysqli_sql_exception $e) {
+        error_log($e->getMessage());
+        return ['error' => DB_ERROR_MESSAGE];
     }
-    
-    $stmt->bind_param("ss", $dateFrom, $dateTo);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $emails = [];
-    while ($row = $result->fetch_assoc()) {
-        $emails[] = $row['email'];
-    }
-    
-    $stmt->close();
     return $emails;
 }
-
